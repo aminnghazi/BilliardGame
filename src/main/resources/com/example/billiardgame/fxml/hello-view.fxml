@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="192.0" prefWidth="261.0" xmlns="http://javafx.com/javafx/16" styleClass="backGround" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.billiardgame.HelloController">
+<center>
+    <Button fx:id="button" onAction="#onHelloButtonClick" styleClass="bis" text="Hi!" />
+</center>
+    <stylesheets>
+        <URL value="@../CSS/main.css" />
+    </stylesheets>
+</BorderPane>
