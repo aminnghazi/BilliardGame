@@ -1,3 +1,5 @@
+package com.example.billiardgame;
+
 public class Vector2d {
 
     private float x;

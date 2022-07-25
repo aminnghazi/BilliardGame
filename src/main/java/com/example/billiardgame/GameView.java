@@ -49,7 +49,7 @@ public class GameView extends Application {
         Color c = Color.AQUA;
         for (int i = 1; i <= 4; i++) {
             for (int j = 0; j <i; j++) {
-                Ball ball = new Ball(200+40*i, 300-20*i + 42*j, 15, c);
+                Ball ball = new Ball(600+40*i, 300-20*i + 42*j, 15, c);
                 pane.getChildren().add(ball);
                 balls.add(ball);
             }
@@ -69,38 +69,34 @@ public class GameView extends Application {
             System.out.println("background picture not found !!!");
         }
         createBalls();
-
     }
 
 
 
     public static void handleMoves(){
-
         for (int i = 0; i < balls.size(); i++) {
             for (int j = i+1; j < balls.size(); j++) {
-              if (ballsCollision(balls.get(i), balls.get(j)))
-                  resolveCollision();
+              if (balls.get(i).colliding( balls.get(j)))
+                  balls.get(i).resolveCollision(balls.get(j));
+//                System.out.println("coll");
             }
             Ball ball = balls.get(i);
-            wallCollision(ball);
             ball.move();
+            wallCollision(ball);
         }
+    }
 
-    }
-    public static boolean ballsCollision(Ball ball1 , Ball ball2){
-        return ball1.getBoundsInParent().intersects(ball2.getBoundsInParent());
-    }
-    public static void resolveCollision(){}
 
     public static void wallCollision(Ball ball){
         if (ball.getCenterX() > wallRight)
-            ball.setDx(ball.getDx() * -1);
+            ball.velocity.setX(ball.velocity.getX() * -0.8f);
         if (ball.getCenterX() < wallLeft)
-            ball.setDx(ball.getDx() * -1);
+            ball.velocity.setX(ball.velocity.getX() * -0.8f);
         if (ball.getCenterY() < wallUp)
-            ball.setDy(ball.getDy() * -1);
+            ball.velocity.setY(ball.velocity.getY() * -0.8f);
         if (ball.getCenterY() > wallDown)
-            ball.setDy(ball.getDy() * -1);    }
+            ball.velocity.setY(ball.velocity.getY() * -0.8f);
+    }
 
 
 }
