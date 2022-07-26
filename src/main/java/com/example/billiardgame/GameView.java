@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point3D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -17,7 +18,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -25,39 +29,41 @@ import java.util.ArrayList;
 
 public class GameView extends Application {
 
+    public Pane pane;
     @FXML
     ImageView backGround;
     @FXML
-    Pane pane;
-    @FXML
     Label pos;
     public static ArrayList<Ball> balls = new ArrayList<>();
-    private static int wallLeft = 80;
-    private static int wallRight = 920;
-    private static int wallUp = 80;
-    private static int wallDown = 520;
+    public static int wallLeft = 180;
+    public static int wallRight = 1020;
+    public static int wallUp = 130;
+    public static int wallDown = 570;
+    public static Ball whiteBall;
+    public static Line line;
+    Color[] colors = {
+            Color.YELLOW,
+            Color.RED,
+            Color.AQUA,
+            Color.GRAY,
+            Color.BLACK,
+            Color.GREEN,
+            Color.BROWN,
+            Color.PURPLE,
+            Color.ORANGE,
+            Color.OLIVE
+    };
 
+//    static Rectangle cue;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        pane = FXMLLoader.load(getClass().getResource("fxml/game-view.fxml"));
+         pane = FXMLLoader.load(getClass().getResource("fxml/game-view.fxml"));
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         pane.requestFocus();
-    }
 
-    private void createBalls() {
-        Color c = Color.AQUA;
-        for (int i = 1; i <= 4; i++) {
-            for (int j = 0; j <i; j++) {
-                Ball ball = new Ball(600+40*i, 300-20*i + 42*j, 15, c);
-                pane.getChildren().add(ball);
-                balls.add(ball);
-            }
-        }
-        MyAnimation animation = new MyAnimation();
-        animation.play();
     }
-
     public void initialize() {
         try {
             Image bg = new Image(new File("bg.png").toURI().toString());
@@ -69,34 +75,42 @@ public class GameView extends Application {
             System.out.println("background picture not found !!!");
         }
         createBalls();
+
     }
 
 
-
-    public static void handleMoves(){
-        for (int i = 0; i < balls.size(); i++) {
-            for (int j = i+1; j < balls.size(); j++) {
-              if (balls.get(i).colliding( balls.get(j)))
-                  balls.get(i).resolveCollision(balls.get(j));
-//                System.out.println("coll");
+    private void createBalls() {
+        whiteBall = new Ball(wallLeft + 120, (wallDown - wallUp)/2 + wallUp, 15,Color.WHITE);
+        balls.add(whiteBall);
+        pane.getChildren().add(whiteBall);
+        int k = 0;
+        for (int i = 1; i <= 4; i++) {
+            for (int j = 0; j <i; j++) {
+                Ball ball = new Ball(720+40*i, (wallDown - wallUp)/2 + wallUp + 10 -20*i + 42*j, 15, colors[k]);
+                pane.getChildren().add(ball);
+                balls.add(ball);
+                k++;
             }
-            Ball ball = balls.get(i);
-            ball.move();
-            wallCollision(ball);
         }
+        line = new Line(whiteBall.getTranslateX(),whiteBall.getTranslateY(),whiteBall.getTranslateX()+200, whiteBall.getTranslateY());
+        line.getStrokeDashArray().addAll(2d,10d);
+//        pane.getChildren().add(line);
+        MyAnimation animation = new MyAnimation(balls,pane);
+        animation.play();
     }
 
 
-    public static void wallCollision(Ball ball){
-        if (ball.getCenterX() > wallRight)
-            ball.velocity.setX(ball.velocity.getX() * -0.8f);
-        if (ball.getCenterX() < wallLeft)
-            ball.velocity.setX(ball.velocity.getX() * -0.8f);
-        if (ball.getCenterY() < wallUp)
-            ball.velocity.setY(ball.velocity.getY() * -0.8f);
-        if (ball.getCenterY() > wallDown)
-            ball.velocity.setY(ball.velocity.getY() * -0.8f);
+
+
+
+    public void onMousePressed(MouseEvent mouseEvent) {
+        line.setEndX(mouseEvent.getX());
+        line.setEndY(mouseEvent.getY());
     }
 
-
+    public void onMouseDragged(MouseEvent mouseEvent) {
+        line.setEndX(mouseEvent.getX());
+        line.setEndY(mouseEvent.getY());
+        pos.setText("x=" + mouseEvent.getX()+"y="+mouseEvent.getY());
+    }
 }

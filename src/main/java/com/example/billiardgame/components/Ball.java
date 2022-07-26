@@ -1,20 +1,34 @@
 package com.example.billiardgame.components;
 
 import com.example.billiardgame.Vector2d;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Sphere;
 
-public class Ball extends Circle {
+public class Ball extends Sphere {
     // baksh physic barkhord toop az stackOverflow copy shode ~_~
     public Vector2d velocity;
     public Vector2d position;
     public int number;
-    public Ball(double centerX, double centerY, float radius, Paint fill) {
-        super(centerX, centerY, radius, fill);
-        this.velocity = new Vector2d(1, 1);
+
+    public Ball(double centerX, double centerY,double radius, Paint fill) {
+        super(radius);
+        this.setTranslateX(centerX);
+        this.setTranslateY(centerY);
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(Color.AQUA);
+        this.velocity = new Vector2d(0.6f, 2);
         this.position = new Vector2d((float) centerX, (float) centerY);
     }
+
+//    public Ball(double centerX, double centerY, float radius, Paint fill) {
+//        super(centerX, centerY, radius, fill);
+//        this.velocity = new Vector2d(-2, -2);
+//        this.position = new Vector2d((float) centerX, (float) centerY);
+//    }
 
     public boolean colliding(Ball ball)
     {
@@ -61,7 +75,7 @@ public class Ball extends Circle {
         if (vn > 0.0f) return;
 
         // collision impulse
-        float i = (-(1.0f + 1) * vn) / (2);
+        float i = (-(1.0f + 0.7f) * vn) / (2);
         Vector2d impulse = mtd.multiply(i);
 
         // change in momentum
@@ -84,8 +98,17 @@ public class Ball extends Circle {
         }
     }
     public void move(){
-        this.position = this.position.add( this.velocity);
-        this.setCenterY(this.position.getY());
-        this.setCenterX(this.position.getX());
+        this.position = this.position.add(this.velocity);
+        this.setTranslateX(this.position.getY());
+        this.setTranslateY(this.position.getY());
+        velocity = velocity.multiply(0.999f);
+        if (velocity.getLength() < 0.25) {
+                velocity = velocity.multiply(0.95f);
+            if (velocity.getLength() < 0.000001f){
+                velocity.setX(0);
+                velocity.setY(0);
+            }
+        }
+
     }
 }
