@@ -15,8 +15,10 @@ import javafx.scene.image.ImageView;
 
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
@@ -39,17 +41,22 @@ public class GameView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        pane = FXMLLoader.load(getClass().getResource("fxml/game-view.fxml"));
+        GridPane pane= FXMLLoader.load(getClass().getResource("fxml/game-view.fxml"));
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
         pane.requestFocus();
     }
 
     private void createBalls() {
-        Color c = Color.AQUA;
+        int k = 0;
         for (int i = 1; i <= 4; i++) {
             for (int j = 0; j <i; j++) {
-                Ball ball = new Ball(600+40*i, 300-20*i + 42*j, 15, c);
+                k++;
+                String url = k + ".png";
+                Image image = new Image(new File(url).toURI().toString());
+                ImagePattern pattern = new ImagePattern(image);
+                Ball ball = new Ball(pane.getLayoutX() + 600+40*i,
+                        pane.getLayoutY()+300-20*i + 42*j, 15,pattern, k);
                 pane.getChildren().add(ball);
                 balls.add(ball);
             }
@@ -63,11 +70,14 @@ public class GameView extends Application {
             Image bg = new Image(new File("bg.png").toURI().toString());
             System.out.println(bg);
             backGround.setImage(bg);
-            System.out.println(bg.getUrl());
         }
         catch (Exception e){
             System.out.println("background picture not found !!!");
         }
+         wallLeft = 80 + (int)pane.getLayoutX();
+         wallRight = 900 + (int)pane.getLayoutX();
+         wallUp = 80 + (int)pane.getLayoutY();
+         wallDown = 475 + (int)pane.getLayoutY();
         createBalls();
     }
 

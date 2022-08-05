@@ -10,10 +10,11 @@ public class Ball extends Circle {
     public Vector2d velocity;
     public Vector2d position;
     public int number;
-    public Ball(double centerX, double centerY, float radius, Paint fill) {
+    public Ball(double centerX, double centerY, float radius, Paint fill,int number) {
         super(centerX, centerY, radius, fill);
-        this.velocity = new Vector2d(1, 1);
+        this.velocity = new Vector2d(6, 6);
         this.position = new Vector2d((float) centerX, (float) centerY);
+        this.number = number;
     }
 
     public boolean colliding(Ball ball)
@@ -61,7 +62,7 @@ public class Ball extends Circle {
         if (vn > 0.0f) return;
 
         // collision impulse
-        float i = (-(1.0f + 1) * vn) / (2);
+        float i = (-(1.0f + 0.85f) * vn) / (2);
         Vector2d impulse = mtd.multiply(i);
 
         // change in momentum
@@ -87,5 +88,14 @@ public class Ball extends Circle {
         this.position = this.position.add( this.velocity);
         this.setCenterY(this.position.getY());
         this.setCenterX(this.position.getX());
+//        if (this.velocity.getLength() < 0.2)
+//            this.velocity.dot(new Vector2d(0.1f,0.1f));
+        this.velocity.setX(velocity.getX()*0.998f);
+        this.velocity.setY(velocity.getY()*0.998f);
+        if(this.velocity.getLength()<0.0000001f){
+            this.velocity.setX(0);
+            this.velocity.setY(0);
+        }
+
     }
 }
