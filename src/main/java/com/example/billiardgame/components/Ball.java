@@ -12,7 +12,7 @@ public class Ball extends Circle {
     public int number;
     public Ball(double centerX, double centerY, float radius, Paint fill,int number) {
         super(centerX, centerY, radius, fill);
-        this.velocity = new Vector2d(6, 6);
+        this.velocity = new Vector2d(1, 1);
         this.position = new Vector2d((float) centerX, (float) centerY);
         this.number = number;
     }
@@ -90,11 +90,12 @@ public class Ball extends Circle {
         this.setCenterX(this.position.getX());
 //        if (this.velocity.getLength() < 0.2)
 //            this.velocity.dot(new Vector2d(0.1f,0.1f));
-        this.velocity.setX(velocity.getX()*0.998f);
-        this.velocity.setY(velocity.getY()*0.998f);
-        if(this.velocity.getLength()<0.0000001f){
-            this.velocity.setX(0);
-            this.velocity.setY(0);
+        velocity = velocity.multiply(0.998f);
+        System.out.println(velocity.getLength());
+        if (velocity.getLength() < 0.5f)
+            velocity = velocity.multiply(0.998f);
+        if(this.velocity.getLength()<0.01f){
+            velocity = velocity.multiply(0);
         }
 
     }

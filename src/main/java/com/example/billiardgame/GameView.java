@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -20,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -38,12 +40,18 @@ public class GameView extends Application {
     private static int wallRight = 920;
     private static int wallUp = 80;
     private static int wallDown = 520;
+    private static boolean steady = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane pane= FXMLLoader.load(getClass().getResource("fxml/game-view.fxml"));
         Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        primaryStage.setWidth(bounds.getWidth());
+        primaryStage.setHeight(bounds.getHeight());
+        primaryStage.setMaximized(true);
         pane.requestFocus();
     }
 
@@ -84,15 +92,22 @@ public class GameView extends Application {
 
 
     public static void handleMoves(){
-        for (int i = 0; i < balls.size(); i++) {
-            for (int j = i+1; j < balls.size(); j++) {
-              if (balls.get(i).colliding( balls.get(j)))
-                  balls.get(i).resolveCollision(balls.get(j));
+        if (!steady) {
+            steady = true;
+            for (int i = 0; i < balls.size(); i++) {
+                for (int j = i + 1; j < balls.size(); j++) {
+                    if (balls.get(i).colliding(balls.get(j)))
+                        balls.get(i).resolveCollision(balls.get(j));
 //                System.out.println("coll");
+                }
+                Ball ball = balls.get(i);
+                if (ball.velocity.getLength() > 0.0001f)
+                    steady = false;
+                ball.move();
+                wallCollision(ball);
             }
-            Ball ball = balls.get(i);
-            ball.move();
-            wallCollision(ball);
+            if (steady)
+                System.out.println("staedy");
         }
     }
 
